@@ -6,11 +6,7 @@ function ctrl_c(){
 	echo -e " Saliendo..."
 	modo="$(iw dev $moninterface info 2>/dev/null | awk '/type/ {print $2}')"
 	if [[ "$modo" == "monitor" || "$modo" == "AP" ]]; then
-		ifconfig $moninterface down >/dev/null 2>&1; sleep 1
-		iwconfig $moninterface mode monitor >/dev/null 2>&1; sleep 1
-		ifconfig $moninterface up >/dev/null 2>&1
-		airmon-ng stop $moninterface > /dev/null 2>&1
-		systemctl start wpa_supplicant NetworkManager > /dev/null 2>&1
+		./reset.sh
 	fi
 	rm -r content 2>/dev/null
 	echo $(cat ./pages/$pagina/datos.txt) > creds.txt 2> /dev/null
