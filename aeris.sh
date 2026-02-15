@@ -13,19 +13,19 @@ function ctrl_c(){
 
 function banner(){
 echo -e "
-  ▄▄      ▓█████  ██▀███   ██▓  ██████ 
-▒████▄    ▓█   ▀ ▓██ ▒ ██ ▓ ▒▓ ██    ▒ 
-▒██  ▀█▄  ▒███   ▓██ ░▄█ ▒▒██▒░ ▓██▄   
-░██▄▄▄▄██ ▒▓█  ▄ ▒██▀▀█▄  ░██░  ▒   ██▒ 
- ▓█   ▓██▒░▒████▒░██▓ ▒██ ░██░▒██████▒▒
- ▒▒   ▓▒█░░░ ▒░ ░░ ▒▓ ░▒▓░░▓  ▒ ▒▓▒ ▒ ░
-  ▒   ▒▒ ░ ░ ░  ░  ░▒ ░ ▒░ ▒ ░░ ░▒  ░ ░
-  ░   ▒      ░     ░░   ░  ▒ ░░  ░  ░  
+   ▄▄      ▓█████  ██▀███   ██▓  ██████ 
+ ▒████▄    ▓█   ▀ ▓██ ▒ ██ ▓ ▒▓ ██    ▒ 
+ ▒██  ▀█▄  ▒███   ▓██ ░▄█ ▒▒██▒░ ▓██▄   
+ ░██▄▄▄▄██ ▒▓█  ▄ ▒██▀▀█▄  ░██░  ▒   ██▒ 
+  ▓█   ▓██▒░▒████▒░██▓ ▒██ ░██░▒██████▒▒
+  ▒▒   ▓▒█░░░ ▒░ ░░ ▒▓ ░▒▓░░▓  ▒ ▒▓▒ ▒ ░
+   ▒   ▒▒ ░ ░ ░  ░  ░▒ ░ ▒░ ▒ ░░ ░▒  ░ ░
+   ░   ▒      ░     ░░   ░  ▒ ░░  ░  ░  
 "
 }
 
 function help(){
-	echo -ne "\n\e[4mOpciones:\e[0m\n"
+	echo -ne "\n \e[4mOpciones:\e[0m\n"
 	echo -ne "\t-p\t Usa aircrack para capturar un handshake y luego crackearlo\n"
 	echo -ne "\t-a\t Usa hostapd y dnsmasq para crear un punto de acceso con un portal cautivo montado con php\n"
 	echo -ne "\t--help\t Muestra este mensaje\n"
