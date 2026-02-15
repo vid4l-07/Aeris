@@ -1,5 +1,4 @@
 #!/bin/bash
-# Por Hugo Vidal 2024-2025
 export TERM=xterm
 trap ctrl_c INT
 function ctrl_c(){
@@ -118,12 +117,12 @@ banner
 if [ "$1" == "-a" ];then
 	programas_ap
 	mon_interfaz
-	/bin/bash ./ap.sh
+	/bin/bash ./src/ap.sh
 
 elif [ "$1" == "-p" ];then
 	programas_wifi
 	mon_interfaz
-	/bin/bash ./wifipass.sh
+	/bin/bash ./src/wifipass.sh
 fi
 
 

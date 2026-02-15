@@ -1,5 +1,4 @@
 #!/bin/bash
-# Por Hugo Vidal 2024-2025
 export TERM=xterm
 trap ctrl_c INT
 function ctrl_c(){

