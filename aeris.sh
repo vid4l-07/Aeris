@@ -12,16 +12,11 @@ function ctrl_c(){
 }
 
 function banner(){
-#	echo -e "\n***********************************************"
-#	echo -e "**                                           **"
-#	echo -e "**    /\/0T|_|R\/\/1F1    (Por Hugo Vidal)   **"
-#	echo -e "**                                           **"
-#	echo -e "***********************************************"
 echo -e "
   ▄▄      ▓█████  ██▀███   ██▓  ██████ 
 ▒████▄    ▓█   ▀ ▓██ ▒ ██ ▓ ▒▓ ██    ▒ 
 ▒██  ▀█▄  ▒███   ▓██ ░▄█ ▒▒██▒░ ▓██▄   
-░██▄▄▄▄██ ▒▓█  ▄ ▒██▀▀█▄  ░██░  ▒   ██▒ \tHecho por Hugo Vidal
+░██▄▄▄▄██ ▒▓█  ▄ ▒██▀▀█▄  ░██░  ▒   ██▒ 
  ▓█   ▓██▒░▒████▒░██▓ ▒██ ░██░▒██████▒▒
  ▒▒   ▓▒█░░░ ▒░ ░░ ▒▓ ░▒▓░░▓  ▒ ▒▓▒ ▒ ░
   ▒   ▒▒ ░ ░ ░  ░  ░▒ ░ ▒░ ▒ ░░ ░▒  ░ ░
@@ -30,7 +25,7 @@ echo -e "
 }
 
 function help(){
-	echo -ne "\nParametros\n\n"
+	echo -ne "\n\e[4mOpciones:\e[0m\n"
 	echo -ne "\t-p\t Usa aircrack para capturar un handshake y luego crackearlo\n"
 	echo -ne "\t-a\t Usa hostapd y dnsmasq para crear un punto de acceso con un portal cautivo montado con php\n"
 	echo -ne "\t--help\t Muestra este mensaje\n"

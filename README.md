@@ -1,5 +1,7 @@
 # AERIS
 
+![screenshot](.github/screenshot.png)
+
 AERIS es un framework desarrollado en Bash para la auditoría de seguridad en redes WiFi con fines educativos y de pruebas autorizadas.
 
 El proyecto implementa dos modos principales de operación:
