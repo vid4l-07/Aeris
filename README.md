@@ -63,7 +63,6 @@ sudo ./aeris.sh -a
 ```bash
 sudo ./aeris.sh -p
 ```
----
 
 ## Estructura del Proyecto
 ```
