@@ -43,23 +43,6 @@ php
 Las credenciales capturadas se almacenan en:
 ```creds.txt```
 
-## Estructura del Proyecto
-```
-aeris/
-│
-├── aeris.sh          # Script principal
-├── src/ 
-│   ├── ap.sh             # Lógica del Access Point y portal cautivo
-│   ├── reset.sh          # Restauración de interfaz
-│   └── wifipass.sh       # Captura y crackeo de WPA/WPA2
-├── pages/            # Plantillas del portal cautivo 
-│   ├── google/
-│   ├── apple/
-│   └── instagram/
-└── utils/            # Scripts auxiliares
-
-```
-
 ## Uso
 - Instalacion
 ```bash
@@ -81,6 +64,23 @@ sudo ./aeris.sh -a
 sudo ./aeris.sh -p
 ```
 ---
+
+## Estructura del Proyecto
+```
+aeris/
+│
+├── aeris.sh          # Script principal
+├── src/ 
+│   ├── ap.sh             # Lógica del Access Point y portal cautivo
+│   ├── reset.sh          # Restauración de interfaz
+│   └── wifipass.sh       # Captura y crackeo de WPA/WPA2
+├── pages/            # Plantillas del portal cautivo 
+│   ├── google/
+│   ├── apple/
+│   └── instagram/
+└── utils/            # Scripts auxiliares
+
+```
 
 ## Limpieza y Restauración
 
