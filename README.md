@@ -2,7 +2,7 @@
 
 # AERIS
 
-Software desarrollado en Bash para auditorías de seguridad en redes WiFi.
+Sript en Bash para auditorías de seguridad en redes WiFi.
 
 ![screenshot](.github/screenshot.png)
 
