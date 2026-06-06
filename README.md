@@ -1,43 +1,38 @@
+<div align="center">
+
 # AERIS
+
+Sript en Bash para auditorías de seguridad en redes WiFi.
 
 ![screenshot](.github/screenshot.png)
 
-AERIS es un framework desarrollado en Bash para la auditoría de seguridad en redes WiFi con fines educativos y de pruebas autorizadas.
+</div>
 
-El proyecto implementa dos modos principales de operación:
+## Modos
 
-1. Captura y crackeo de handshakes WPA/WPA2
-2. Despliegue de Access Point malicioso con portal cautivo
+Implementa dos modos principales de operación:
 
----
+### Auditoría WPA/WPA2
 
-## Funcionalidades
-**1. Auditoría WPA/WPA2**
-
-- Activación del modo monitor
 - Escaneo de redes disponibles
 - Captura de handshake WPA/WPA2
 - Envío de paquetes de desautenticación
 - Ataque por diccionario
-- Exportación de contraseña recuperada a password.txt
 
 Dependencias:
 ```
 aircrack-ng
 ```
 
-**2. Rogue Access Point + Portal Cautivo**
+### Rogue Access Point + Portal Cautivo
 
-- Creación de punto de acceso configurable
-- WPA2 opcional
-- Configuración automática de DHCP y DNS
-- Portal cautivo basado en PHP
+- Creación de punto de acceso configurable, con WPA2 opcional
+- Configuración automática de DHCP
+- Portal cautivo basado en PHP con captura de credenciales
 - Plantillas disponibles:
     - Google
     - Apple
     - Instagram
-- Captura de credenciales introducidas por clientes
-- Redirección opcional a Internet mediante NAT
 
 Dependencias:
 ```
@@ -47,27 +42,6 @@ php
 ```
 Las credenciales capturadas se almacenan en:
 ```creds.txt```
-
----
-
-## Estructura del Proyecto
-```
-aeris/
-│
-├── aeris.sh          # Script principal
-├── src/ 
-│   ├── ap.sh             # Lógica del Access Point y portal cautivo
-│   ├── reset.sh          # Restauración de interfaz
-│   └── wifipass.sh       # Captura y crackeo de WPA/WPA2
-├── pages/            # Plantillas del portal cautivo 
-│   ├── google/
-│   ├── apple/
-│   └── instagram/
-└── utils/            # Scripts auxiliares
-
-```
-
----
 
 ## Uso
 - Instalacion
@@ -89,7 +63,23 @@ sudo ./aeris.sh -a
 ```bash
 sudo ./aeris.sh -p
 ```
----
+
+## Estructura del Proyecto
+```
+aeris/
+│
+├── aeris.sh          # Script principal
+├── src/ 
+│   ├── ap.sh             # Lógica del Access Point y portal cautivo
+│   ├── reset.sh          # Restauración de interfaz
+│   └── wifipass.sh       # Captura y crackeo de WPA/WPA2
+├── pages/            # Plantillas del portal cautivo 
+│   ├── google/
+│   ├── apple/
+│   └── instagram/
+└── utils/            # Scripts auxiliares
+
+```
 
 ## Limpieza y Restauración
 
@@ -101,11 +91,9 @@ Al finalizar o interrumpir el proceso:
 
 ---
 
-## Advertencia Legal
+### Advertencia Legal
 
 Este software está destinado exclusivamente a:
-
-- Laboratorios personales
 - Auditorías autorizadas
 - Formación académica
 - El autor no asume responsabilidad por el uso indebido del software.
