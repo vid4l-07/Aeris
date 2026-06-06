@@ -3,17 +3,27 @@ export TERM=xterm
 trap ctrl_c INT
 function ctrl_c(){
 	echo -e " Saliendo..."
-	modo="$(iw dev $moninterface info | awk '/type/ {print $2}' 2>/dev/null)"
-	if [[ "$modo" == "monitor" || "$modo" == "AP" ]]; then
-		./reset.sh 
-	fi
-	rm -r content 2>/dev/null
+
+	./src/reset.sh monitor
 	exit 0
 }
 
-##############################    datos    ########################################################
+interfaz=$(/bin/cat ./content/interfaz)
 
-moninterface=$(/bin/cat ./content/interfaz)
+function configurar_interfaz(){
+	echo -e "\n. . . . Matando los procesos que puedan interferir"
+	systemctl stop wpa_supplicant NetworkManager
+	sleep 1
+	echo -e ". . . . Poniendo la interfaz $interfaz en modo monitor\n"
+	airmon-ng start $interfaz > /dev/null 2>&1
+	sleep 0.5
+	iw dev | awk '/Interface/ {iface=$2} /type monitor/ {print iface}' > ./content/interfaz
+	moninterface=$(/bin/cat ./content/interfaz)
+	echo -e "\nInterfaz $moninterface creada\n"
+	sleep 1
+}
+
+##############################    datos    ########################################################
 
 function datos_wifi(){
 	echo -ne "\n -  Ahora se va a ejecutar un comando en una ventana nueva que te mostrara la redes disponibles\n -  Cuando introduzca todos los datos cierre la ventana\n"
@@ -64,6 +74,7 @@ function pass_attack(){
 ################################    Inicio del programa    #############################
 
 clear
+configurar_interfaz
 datos_wifi
 pass_attack
 

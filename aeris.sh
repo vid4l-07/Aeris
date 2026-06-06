@@ -2,16 +2,12 @@
 export TERM=xterm
 trap ctrl_c INT
 function ctrl_c(){
-#	echo -e " Saliendo..."
 	rm -r content data 2>/dev/null
-	modo="$(iw dev $moninterface info 2>/dev/null | awk '/type/ {print $2}')"
-	if [[ "$modo" == "monitor" || "$modo" == "AP" ]]; then
-		./reset.sh
-	fi
 	exit 0
 }
 
 function banner(){
+echo -e "\033[31m"
 echo -e "
    ▄▄      ▓█████  ██▀███   ██▓  ██████ 
  ▒████▄    ▓█   ▀ ▓██ ▒ ██ ▓ ▒▓ ██    ▒ 
@@ -22,6 +18,7 @@ echo -e "
    ▒   ▒▒ ░ ░ ░  ░  ░▒ ░ ▒░ ▒ ░░ ░▒  ░ ░
    ░   ▒      ░     ░░   ░  ▒ ░░  ░  ░  
 "
+echo -e "\033[0m"
 }
 
 function help(){
@@ -32,31 +29,21 @@ function help(){
 }
 
 ##############################    datos    ########################################################
-function mon_interfaz (){	
+function set_interfaz (){	
 	echo -ne "\n======Interfaces======\n"
 	interfaces=$(iw dev | grep Interface | awk '{print $2}')
 	echo "$interfaces"
 	iw dev | grep Interface | awk '{print $2}' > content/interfaces.txt 2>&1
-	sleep 1
 
-	interfaz="asdcds"
+	interfaz="sdlkjfh"
     while !(grep $interfaz content/interfaces.txt >/dev/null 2>&1); do
 		echo -ne "\nNombre de la interfaz a usar: " && read -r interfaz
 		if !(grep $interfaz content/interfaces.txt >/dev/null 2>&1); then
 			echo -e "\nLa interfaz $interfaz no existe"
 		fi
-	done; sleep 1
+	done; sleep 0.5
 
-	echo -e "\n. . . . Matando los procesos que puedan interferir"
-	systemctl stop wpa_supplicant NetworkManager
-	sleep 1
-	echo -e ". . . . Poniendo la interfaz $interfaz en modo monitor\n"
-	airmon-ng start $interfaz > /dev/null 2>&1
-	sleep 0.5
-	iw dev | awk '/Interface/ {iface=$2} /type monitor/ {print iface}' > ./content/interfaz
-	moninterface=$(/bin/cat ./content/interfaz)
-	echo -e "\nInterfaz $moninterface creada\n"
-	sleep 1
+	echo $interfaz > ./content/interfaz
 }
 
 function programas_ap(){
@@ -111,12 +98,12 @@ banner
 
 if [ "$1" == "-a" ];then
 	programas_ap
-	mon_interfaz
+	set_interfaz
 	/bin/bash ./src/ap.sh
 
 elif [ "$1" == "-p" ];then
 	programas_wifi
-	mon_interfaz
+	set_interfaz
 	/bin/bash ./src/wifipass.sh
 fi
 
