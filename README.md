@@ -2,98 +2,98 @@
 
 # AERIS
 
-Sript en Bash para auditorías de seguridad en redes WiFi.
+Bash script for security audits on WiFi networks.
 
 ![screenshot](.github/screenshot.png)
 
 </div>
 
-## Modos
+## Modes
 
-Implementa dos modos principales de operación:
+It implements two main operating modes:
 
-### Auditoría WPA/WPA2
+### WPA/WPA2 Audit
 
-- Escaneo de redes disponibles
-- Captura de handshake WPA/WPA2
-- Envío de paquetes de desautenticación
-- Ataque por diccionario
+- Scanning of available networks
+- WPA/WPA2 handshake capture
+- Sending deauthentication packets
+- Dictionary attack
 
-Dependencias:
+Dependencies:
 ```
 aircrack-ng
 ```
 
-### Rogue Access Point + Portal Cautivo
+### Rogue Access Point + Captive Portal
 
-- Creación de punto de acceso configurable, con WPA2 opcional
-- Configuración automática de DHCP
-- Portal cautivo basado en PHP con captura de credenciales
-- Plantillas disponibles:
+- Creation of a configurable access point, with optional WPA2
+- Automatic DHCP configuration
+- PHP-based captive portal with credential capture
+- Available templates:
     - Google
     - Apple
     - Instagram
 
-Dependencias:
+Dependencies:
 ```
 hostapd
 dnsmasq
 php
 ```
-Las credenciales capturadas se almacenan en:
+Captured credentials are stored in:
 ```creds.txt```
 
-## Uso
-- Instalacion
+## Usage
+- Installation
 ```bash
 git clone https://github.com/vid4l-07/Aeris.git
 ```
 
-- Mostrar ayuda
+- Show help
 ```bash
 sudo ./aeris.sh --help
 ```
 
-- Rogue AP con Portal Cautivo
+- Rogue AP with Captive Portal
 ```bash
 sudo ./aeris.sh -a
 ```
 
-- Captura y Crackeo de handshake WPA/WPA2
+- WPA/WPA2 handshake capture and cracking
 ```bash
 sudo ./aeris.sh -p
 ```
 
-## Estructura del Proyecto
+## Project Structure
 ```
 aeris/
 │
-├── aeris.sh          # Script principal
+├── aeris.sh          # Main script
 ├── src/ 
-│   ├── ap.sh             # Lógica del Access Point y portal cautivo
-│   ├── reset.sh          # Restauración de interfaz
-│   └── wifipass.sh       # Captura y crackeo de WPA/WPA2
-├── pages/            # Plantillas del portal cautivo 
+│   ├── ap.sh             # Access Point and captive portal logic
+│   ├── reset.sh          # Interface restoration
+│   └── wifipass.sh       # WPA/WPA2 capture and cracking
+├── pages/            # Captive portal templates 
 │   ├── google/
 │   ├── apple/
 │   └── instagram/
-└── utils/            # Scripts auxiliares
+└── utils/            # Helper scripts
 
 ```
 
-## Limpieza y Restauración
+## Cleanup and Restoration
 
-Al finalizar o interrumpir el proceso:
-- Se eliminan directorios temporales (content/, data/)
-- Se restauran las interfaces de red
-- Se detienen procesos asociados
-- Se ejecuta reset.sh para devolver la interfaz a estado normal
+When finishing or interrupting the process:
+- Temporary directories are removed (content/, data/)
+- Network interfaces are restored
+- Associated processes are stopped
+- reset.sh is run to return the interface to its normal state
 
 ---
 
-### Advertencia Legal
+### Legal Warning
 
-Este software está destinado exclusivamente a:
-- Auditorías autorizadas
-- Formación académica
-- El autor no asume responsabilidad por el uso indebido del software.
+This software is intended exclusively for:
+- Authorized audits
+- Academic training
+- The author assumes no responsibility for misuse of the software.

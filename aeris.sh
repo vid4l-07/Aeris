@@ -22,68 +22,68 @@ echo -e "\033[0m"
 }
 
 function help(){
-	echo -ne "\n \e[4mOpciones:\e[0m\n"
-	echo -ne "\t-p\t Usa aircrack para capturar un handshake y luego crackearlo\n"
-	echo -ne "\t-a\t Usa hostapd y dnsmasq para crear un punto de acceso con un portal cautivo montado con php\n"
-	echo -ne "\t--help\t Muestra este mensaje\n"
+	echo -ne "\n \e[4mOptions:\e[0m\n"
+	echo -ne "\t-p\t Use aircrack to capture a handshake and then crack it\n"
+	echo -ne "\t-a\t Use hostapd and dnsmasq to create an access point with a captive portal built with php\n"
+	echo -ne "\t--help\t Show this message\n"
 }
 
-##############################    datos    ########################################################
-function set_interfaz (){	
+##############################    data    ########################################################
+function set_interface (){	
 	echo -ne "\n======Interfaces======\n"
 	interfaces=$(iw dev | grep Interface | awk '{print $2}')
 	echo "$interfaces"
 	iw dev | grep Interface | awk '{print $2}' > content/interfaces.txt 2>&1
 
-	interfaz="sdlkjfh"
-    while !(grep $interfaz content/interfaces.txt >/dev/null 2>&1); do
-		echo -ne "\nNombre de la interfaz a usar: " && read -r interfaz
-		if !(grep $interfaz content/interfaces.txt >/dev/null 2>&1); then
-			echo -e "\nLa interfaz $interfaz no existe"
+	interface="sdlkjfh"
+	while !(grep $interface content/interfaces.txt >/dev/null 2>&1); do
+		echo -ne "\nInterface name to use: " && read -r interface
+		if !(grep $interface content/interfaces.txt >/dev/null 2>&1); then
+			echo -e "\nThe interface $interface does not exist"
 		fi
 	done; sleep 0.5
 
-	echo $interfaz > ./content/interfaz
+	echo $interface > ./content/interface
 }
 
-function programas_ap(){
-	echo -e "\nComprobando programas necesarios...\n"
+function check_ap_programs(){
+	echo -e "\nChecking required programs...\n"
 	sleep 0.5
-	programaslist=("dnsmasq" "hostapd" "php")
+	programs_list=("dnsmasq" "hostapd" "php")
 
-	for programa in "${programaslist[@]}"; do
-		if [ "$(which $programa)" ]; then
-			echo ". . . . $programa esta instalado"
+	for program in "${programs_list[@]}"; do
+		if [ "$(which $program)" ]; then
+			echo ". . . . $program is installed"
 		else
-			echo ". . . . $programa no esta instalado :("
+			echo ". . . . $program is not installed :("
 			exit 0
 		fi
-	done; echo -e "\nTodo en orden :)\n"
+	done; echo -e "\nAll good :)\n"
 	sleep 1; clear
 }
 
-function programas_wifi(){
-	echo -e "\nComprobando programas necesarios...\n"
-	sleep 1
-	programaslist=("aircrack-ng")
+function check_wifi_programs(){
+	echo -e "\nChecking required programs...\n"
+	sleep 0.5
+	programs_list=("aircrack-ng")
 
-	for programa in "${programaslist[@]}"; do
-		if [ "$(which $programa)" ]; then
-			echo ". . . . $programa esta instalado"
+	for program in "${programs_list[@]}"; do
+		if [ "$(which $program)" ]; then
+			echo ". . . . $program is installed"
 		else
-			echo ". . . . $programa no esta instalado :("
+			echo ". . . . $program is not installed :("
 			exit 0
 		fi
-	done; echo -e "\nTodo en orden :)\n"
+	done; echo -e "\nAll good :)\n"
 	sleep 1; clear
 }
 
-################################    Inicio del programa    #############################
+################################    Program start    #############################
 
 if [ "$(id -u)" -eq 0 ];then
 	echo ""
 else
-    echo "Este script necesita ser ejecutado como root."
+    echo "This script needs to be run as root."
     exit 1
 fi
 
@@ -97,14 +97,13 @@ mkdir content data 2>/dev/null
 banner
 
 if [ "$1" == "-a" ];then
-	programas_ap
-	set_interfaz
+	check_ap_programs
+	set_interface
 	/bin/bash ./src/ap.sh
 
 elif [ "$1" == "-p" ];then
-	programas_wifi
-	set_interfaz
+	check_wifi_programs
+	set_interface
 	/bin/bash ./src/wifipass.sh
 fi
-
 

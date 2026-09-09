@@ -1,9 +1,9 @@
 #!/bin/bash
 trap '' INT
 
-interface=$(/bin/cat ./content/interfaz)
+interface=$(/bin/cat ./content/interface)
 
-echo "[+] Restaurando interfaz $moninterface..."
+echo "[+] Restoring interface $moninterface..."
 
 if [ "$1" == "monitor" ];then
 	airmon-ng stop $interface >/dev/null
