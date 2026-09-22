@@ -134,7 +134,7 @@ function hosts_connect(){
 		echo -e "\nConnected victims: $activehosts\n"
 		echo -e "\nCaptured data: $captured_data\n"
 		echo -e "----------------------------------------------------------"
-		activehosts=$(bash ./utils/hostsconnect.sh | grep -v "10.10.0.1 " | wc -l 2> /dev/null)
+		activehosts=$(bash ./src/hostsconnect.sh | grep -v "10.10.0.1 " | wc -l 2> /dev/null)
 		captured_data=$(/bin/cat ./page/captive_portal/data.txt 2>/dev/null)
 		sleep 2
 	done
