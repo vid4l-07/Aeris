@@ -6,8 +6,8 @@ function ctrl_c(){
 	./src/reset.sh ap
 	rm -r page/captive_portal/html_page
 
-	if [ -n "$(/bin/cat ./pages/$template/data.txt 2>&1)" ];then
-		/bin/cat ./page/captive_portal/data.txt 2> /dev/null > creds.txt
+	if [ -f ./page/captive_portal/data.txt ];then
+		/bin/cat ./page/captive_portal/data.txt > creds.txt 2> /dev/null
 		rm ./page/captive_portal/data.txt
 	fi
 	exit 0
@@ -60,7 +60,7 @@ function ap_data(){
 		echo -ne "$i: ${templates[$i]}\n"
 	done
 
-	while [ -z "$template_index" ] || [ "$template_index" -ge "${#templates[@]}" ] || [ "$template_index" -lt 0 ]; do
+	while [ -z "$template_index" ] || ! [[ "$template_index" =~ ^[0-9]+$ ]] || [ "$template_index" -ge "${#templates[@]}" ]; do
 		echo -ne "\nTemplate for the captive portal: " && read -r template_index
 	done
 	template=${templates[$template_index]}
@@ -96,7 +96,9 @@ macaddr_acl=0
 auth_algs=1
 EOF
 if [ "$pass" != "" ]; then
-	echo -e "wpa=2\n" >> content/hostapd.conf
+	echo -e "wpa=2" >> content/hostapd.conf
+	echo -e "wpa_key_mgmt=WPA-PSK" >> content/hostapd.conf
+	echo -e "rsn_pairwise=CCMP" >> content/hostapd.conf
 	echo -e "wpa_passphrase=$pass" >> content/hostapd.conf
 fi
 

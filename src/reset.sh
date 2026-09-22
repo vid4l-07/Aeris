@@ -3,7 +3,7 @@ trap '' INT
 
 interface=$(/bin/cat ./content/interface)
 
-echo "[+] Restoring interface $moninterface..."
+echo "[+] Restoring interface $interface..."
 
 if [ "$1" == "monitor" ];then
 	airmon-ng stop $interface >/dev/null
@@ -19,7 +19,7 @@ fi
 pkill hostapd
 pkill dnsmasq 
 
-systemctl -q unmask wpa_supplicant NetworkManager 2> /dev/ull
+systemctl -q unmask wpa_supplicant NetworkManager 2> /dev/null
 systemctl -q restart wpa_supplicant NetworkManager 2> /dev/null
 systemctl -q unmask systemd-resolved-monitor.socket systemd-resolved-varlink.socket systemd-resolved 2> /dev/null
 systemctl -q restart systemd-resolved-monitor.socket systemd-resolved-varlink.socket systemd-resolved 2> /dev/null

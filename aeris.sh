@@ -36,9 +36,9 @@ function set_interface (){
 	iw dev | grep Interface | awk '{print $2}' > content/interfaces.txt 2>&1
 
 	interface="sdlkjfh"
-	while !(grep $interface content/interfaces.txt >/dev/null 2>&1); do
+	while !(grep "$interface" content/interfaces.txt >/dev/null 2>&1); do
 		echo -ne "\nInterface name to use: " && read -r interface
-		if !(grep $interface content/interfaces.txt >/dev/null 2>&1); then
+		if !(grep "$interface" content/interfaces.txt >/dev/null 2>&1); then
 			echo -e "\nThe interface $interface does not exist"
 		fi
 	done; sleep 0.5
@@ -49,14 +49,14 @@ function set_interface (){
 function check_ap_programs(){
 	echo -e "\nChecking required programs...\n"
 	sleep 0.5
-	programs_list=("dnsmasq" "hostapd" "php")
+	programs_list=("dnsmasq" "hostapd" "php" "iw")
 
 	for program in "${programs_list[@]}"; do
 		if [ "$(which $program)" ]; then
 			echo ". . . . $program is installed"
 		else
 			echo ". . . . $program is not installed :("
-			exit 0
+			exit 1
 		fi
 	done; echo -e "\nAll good :)\n"
 	sleep 1; clear
@@ -65,14 +65,14 @@ function check_ap_programs(){
 function check_wifi_programs(){
 	echo -e "\nChecking required programs...\n"
 	sleep 0.5
-	programs_list=("aircrack-ng")
+	programs_list=("aircrack-ng" "airmon-ng" "airodump-ng" "aireplay-ng" "iw" "xterm")
 
 	for program in "${programs_list[@]}"; do
 		if [ "$(which $program)" ]; then
 			echo ". . . . $program is installed"
 		else
 			echo ". . . . $program is not installed :("
-			exit 0
+			exit 1
 		fi
 	done; echo -e "\nAll good :)\n"
 	sleep 1; clear

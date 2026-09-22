@@ -22,6 +22,8 @@ It implements two main operating modes:
 Dependencies:
 ```
 aircrack-ng
+iw
+xterm
 ```
 
 ### Rogue Access Point + Captive Portal
@@ -31,7 +33,6 @@ aircrack-ng
 - PHP-based captive portal with credential capture
 - Available templates:
     - Google
-    - Apple
     - Instagram
 
 Dependencies:
@@ -39,6 +40,7 @@ Dependencies:
 hostapd
 dnsmasq
 php
+iw
 ```
 Captured credentials are stored in:
 ```creds.txt```
@@ -73,18 +75,23 @@ aeris/
 │   ├── ap.sh             # Access Point and captive portal logic
 │   ├── reset.sh          # Interface restoration
 │   └── wifipass.sh       # WPA/WPA2 capture and cracking
-├── pages/            # Captive portal templates 
-│   ├── google/
-│   ├── apple/
-│   └── instagram/
-└── utils/            # Helper scripts
-
+├── page/
+│   ├── captive_portal/   # PHP server files (index.php, save.php)
+│   └── templates/        # Captive portal templates
+│       ├── google/
+│       └── instagram/
+├── utils/              # Helper scripts
+│   └── hostsconnect.sh
+├── creds.txt          # Captured credentials (gitignored)
+├── content/           # Runtime files (created on execution)
+└── data/              # Handshake captures (created on execution)
 ```
 
 ## Cleanup and Restoration
 
 When finishing or interrupting the process:
 - Temporary directories are removed (content/, data/)
+- Captured credentials stored in `creds.txt`
 - Network interfaces are restored
 - Associated processes are stopped
 - reset.sh is run to return the interface to its normal state
